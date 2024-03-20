@@ -20,24 +20,36 @@ import java.util.Optional;
 @WebServlet(name = "secretServlet", value = "/secret")
 public class SecretServlet extends HttpServlet {
 
+    //todo docker.yml somehwere
+
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         JWTVerifier jwtVerifier = JWT.require(CookieVaultServlet.ALGORITHM).build();
-        Optional<String> jwt = Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals("JWT"))
-                .findAny()
-                .map(Cookie::getValue)
-                .map(jwtVerifier::verify)
-                .map(DecodedJWT::getClaims)
-                .map(map -> map.get("Secret"))
-                .map(Claim::asString);
+
+
+        Optional<String> secretValue;
+        try { // todo error handling
+            secretValue = Arrays.stream(request.getCookies())
+                    .filter(cookie -> cookie.getName().equals("JWT"))
+                    .findAny()
+                    .map(Cookie::getValue)
+                    .map(jwtVerifier::verify)
+                    .map(DecodedJWT::getClaims)
+                    .map(map -> map.get("Secret"))
+                    .map(Claim::asString);
+        } catch (JWTVerificationException verificationException) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, 
+                    "I told you do get your cookie first! Here is the exception msg anyways:" + verificationException.getMessage());
+            return;
+        }
 
         PrintWriter out = response.getWriter();
-        jwt.ifPresentOrElse((secret) -> {
+        secretValue.ifPresentOrElse((secret) -> {//todo html
             out.println("<html><body>");
             out.println("<h1>" + "Here is the secret I hid in your cookie" + "</h1>");
             out.println("<div>" + secret + "</div>");
             out.println("</body></html>");
-        },()->out.println("<html><body>I told you to get your cookie first mate...</html></body>"));
+        }, () -> out.println("<html><body>I told you to get your cookie first mate...</html></body>"));
 
     }
 }
