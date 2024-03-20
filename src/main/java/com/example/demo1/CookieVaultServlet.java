@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.*;
 
 @WebServlet(name = "cookieVaultServlet", value = "/the-cookie-vault")
 public class CookieVaultServlet extends HttpServlet {
+    //todo remove salt and make the secret "easier" to crack and add riddle for additional clam
     public static final LocalDate CHEAP_SALT = LocalDate.now();
     public static final Algorithm ALGORITHM = Algorithm.HMAC256("tomcat"+ CHEAP_SALT);
     private String message;
@@ -24,7 +25,7 @@ public class CookieVaultServlet extends HttpServlet {
         // Hello
         String jwt = JWT.create().withClaim("Secret", "Hello Hacker. This is your price.").sign(ALGORITHM);
 
-        PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter(); //todo html
         out.println("<html><body>");
         out.println("<h1>" + message + "</h1>");
         out.println("<div>"+ "you fond your JWT! "
