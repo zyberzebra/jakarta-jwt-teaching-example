@@ -9,6 +9,9 @@
 </h1>
 <br/>
 <a href="the-cookie-vault">The Cool Cookie Vault</a>
+<br/>
 <a href="secret">Get your cookie first!</a>
+<br/>
+<br/>
 </body>
 </html>

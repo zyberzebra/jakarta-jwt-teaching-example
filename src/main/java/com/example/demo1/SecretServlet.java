@@ -38,8 +38,7 @@ public class SecretServlet extends HttpServlet {
                     .map(map -> map.get("Secret"))
                     .map(Claim::asString);
         } catch (JWTVerificationException verificationException) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, 
-                    "I told you do get your cookie first! Here is the exception msg anyways:" + verificationException.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "I told you do get your cookie first! Here is the exception msg anyways:" + verificationException.getMessage());
             return;
         }
 
@@ -48,8 +47,12 @@ public class SecretServlet extends HttpServlet {
             out.println("<html><body>");
             out.println("<h1>" + "Here is the secret I hid in your cookie" + "</h1>");
             out.println("<div>" + secret + "</div>");
+            out.println("<div>" + "but, if you want to see the real secret you have to provide the 'answer' to my Riddle+" + "</div>");
+            out.println("<div>" + "Arrr, what be a famous open-source project fer web applications, often used fer Java servers, and named after a critter?" + "</div>");
+            out.println("<div>" + "Some would say it's a secret" + "</div>");
+            String s = request.getContextPath() + "/secret/supersecret";
+            out.println(String.format("<a href=\"%s\">Here is the secret!</a>",s));
             out.println("</body></html>");
         }, () -> out.println("<html><body>I told you to get your cookie first mate...</html></body>"));
-
-    }
+        }
 }
